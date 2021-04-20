@@ -112,6 +112,7 @@ export default {
         }
     },
     async created() {
+        console.log('created() called');
         try {
             let response = await axios.get(`/api/users/`);
             this.$root.$data.user = response.data.user;
@@ -119,12 +120,18 @@ export default {
             this.$root.$data.user = null;
         }
 
+        this.folder = null;
+        await this.getFolders();
+
         if(this.note !== null){
+            console.log('created() selecting note: ' + this.note.name + this.note.extension);
             let tmp = await this.getFolderFromNote(this.$root.$data.note);
             this.folder = tmp;
             await this.getNotes();
             this.$root.$data.note = this.notes.find(n => n._id === this.$root.$data.note._id);
         }
+
+        console.log('currently selected note: ' + this.$root.$data.note.name);
     },
     computed: {
         currentTags() {
@@ -317,12 +324,22 @@ export default {
         folder: function(newvalue){
             if(newvalue !== null){
                 this.getNotes();
+            }else{
+                this.notes = [];
             }
         },
-        '$root.$data.user': async function(){
-            // console.log('does this even work');
+        '$root.$data.user': async function(newvalue, oldvalue){
+            if(oldvalue!==null && newvalue!==null && oldvalue.username === newvalue.username)
+                return;
+            console.log(`change in user from ${(oldvalue!==null)?oldvalue.username:'nobody'} to ${(newvalue!==null)?newvalue.username:'nobody'}`)
             this.folder = null;
             await this.getFolders();
+        },
+        '$root.$data.note': function(newvalue, oldvalue){
+            if(oldvalue!==null && newvalue!==null && oldvalue.name === newvalue.name)
+                return;
+            console.log(`change in note from ${(oldvalue!==null)?oldvalue.name:'no note'} to ${(newvalue!==null)?newvalue.name:'no note'}`)
+
         }
     }
 }

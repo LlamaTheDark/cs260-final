@@ -1,10 +1,17 @@
 <template>
     <div id="app">
-        <div id="nav">
+        <div id="nav" v-if="user">
             <router-link to="/">
                 Edit Files</router-link>
             <router-link to="/search">
                 Search Files</router-link>
+        </div>
+        <div v-else>
+            <div id='spacer'>
+            </div>
+            <h1>
+                Note App Login & Signup
+            </h1>
         </div>
         <router-view/>
         <div id="footer">
@@ -31,6 +38,11 @@ export default {
     //     );
     //     data.tags.sort();
     // }
+    computed: {
+        user() {
+            return this.$root.$data.user;
+        }
+    }
 }
 </script>
 
@@ -39,6 +51,11 @@ export default {
 
 /* @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+
+#spacer {
+    width: 50%;
+    padding-bottom: 10%;
+}
 
 body {
     background-color: rgb(255, 255, 252);

@@ -5,7 +5,7 @@
         </h2>
         <ul id='files'>
             <li v-for="n in notes" :key="n.id" @click='selectNote(n)'>
-                <h4 :class="{selected: (n === note), 'note-title': true}">
+                <h4 :class="{selected: (n._id === note._id), 'note-title': true}">
                     {{ n.name }}{{ n.extension }}
                 </h4>
                 <hr>
@@ -23,14 +23,13 @@ export default {
     },
     computed: {
         note(){
-            return this.$root.$data.note;
+            return (this.$root.$data.note !== null)?this.$root.$data.note:{name: '', extension: ''};
         }
     },
     methods: {
         selectNote(n){
             this.$root.$data.note = n;
-            console.log(`selecting note:`);
-            console.log(this.$root.$data.note);
+            console.log(`selecting note: ${this.$root.$data.note.name}${this.$root.$data.note.extension}`);
         }
     },
 }
