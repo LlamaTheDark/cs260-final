@@ -1,99 +1,100 @@
 <template>
 <div class='home'>
-    <div id='controls'>
-        Folders:
-        <button @click="addFolder">
-            Add Folder
-        </button>
-        <button @click="deleteFolder">
-            Delete Folder
-        </button>
-        Notes:
-        <button @click="addNote">
-            Add Note
-        </button>
-        <button @click="deleteNote">
-            Delete Note
-        </button>
-        <input type='checkbox' v-model="rendered">
-        Render Text
-    </div>
-    <div class='main-components'>
-        <div class='lists'>
-            <div id='folders-list'>
-                <h2 class='title'>
-                    Folders
-                </h2>
-                <ul id='folders'>
-                    <li v-for="f in folders" :key="f._id" @click='selectFolder(f)'>
-                        <div :class="{'selected-folder': (f === folder), 'folder-title': true}">
-                            <h4>
-                                {{ f.name }}
-                            </h4>
-                            <div v-if="f === folder">
-                                <p class='folder-description'>
-                                    {{ f.description }}
-                                </p>
-                                <p class='folder-note-count'>
-                                    total notes: {{ f.noteCount }}
-                                </p>
+    <div v-if="user">
+        <div id='controls'>
+            Folders:
+            <button @click="addFolder">
+                Add Folder
+            </button>
+            <button @click="deleteFolder">
+                Delete Folder
+            </button>
+            Notes:
+            <button @click="addNote">
+                Add Note
+            </button>
+            <button @click="deleteNote">
+                Delete Note
+            </button>
+            <input type='checkbox' v-model="rendered">
+            Render Text
+        </div>
+        <div class='main-components'>
+            <div class='lists'>
+                <div id='folders-list'>
+                    <h2 class='title'>
+                        Folders
+                    </h2>
+                    <ul id='folders'>
+                        <li v-for="f in folders" :key="f._id" @click='selectFolder(f)'>
+                            <div :class="{'selected-folder': (f === folder), 'folder-title': true}">
+                                <h4>
+                                    {{ f.name }}
+                                </h4>
+                                <div v-if="f === folder">
+                                    <p class='folder-description'>
+                                        {{ f.description }}
+                                    </p>
+                                    <p class='folder-note-count'>
+                                        total notes: {{ f.noteCount }}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <hr>
-                    </li>
-                </ul>
-            </div>
-            <div id='files-list'>
-                <FilesList id='files-list' :notes="notes" :options="true" />
+                            <hr>
+                        </li>
+                    </ul>
+                </div>
+                <div id='files-list'>
+                    <FilesList id='files-list' :notes="notes" :options="true" />
 
-                <!-- <h2 class='title'>
-                    Notes
-                </h2> -->
-                <!--
-                <ul id='files'>
-                    <li v-for="n in notes" :key="n._id" @click='selectNote(n)'>
-                        <h4 :class="{selected: (n === note), 'note-title': true}">
-                            {{ n.name }}{{ n.extension }}
-                        </h4>
-                        <hr>
-                    </li>
-                </ul> -->
+                    <!-- <h2 class='title'>
+                        Notes
+                    </h2> -->
+                    <!--
+                    <ul id='files'>
+                        <li v-for="n in notes" :key="n._id" @click='selectNote(n)'>
+                            <h4 :class="{selected: (n === note), 'note-title': true}">
+                                {{ n.name }}{{ n.extension }}
+                            </h4>
+                            <hr>
+                        </li>
+                    </ul> -->
+                </div>
+            </div>
+            <FileView id='file-view' :note="note" :rendered="rendered" :folder="folder" />
+            <div class='tag-view'>
+                <div>
+                    <h2 class='title'>
+                        Tags
+                    </h2>
+                    <ul id='tags'>
+                        <li id='tag' v-for="tag in currentTags" :key="currentTags.indexOf(tag)">
+                            {{tag}}
+                            <b id='remove-tag' @click='removeTag(tag)'>
+                            --
+                            </b>
+                        </li>
+                    </ul>
+                </div>
+                <form @submit.prevent="addNewTag">
+                    <input id='new-tag-text' v-model='newTagText' placeholder='add new tag...' />
+                </form>
             </div>
         </div>
-        <FileView id='file-view' :note="note" :rendered="rendered" :folder="folder" />
-        <div class='tag-view'>
-            <div>
-                <h2 class='title'>
-                    Tags
-                </h2>
-                <ul id='tags'>
-                    <li id='tag' v-for="tag in currentTags" :key="currentTags.indexOf(tag)">
-                        {{tag}}
-                        <b id='remove-tag' @click='removeTag(tag)'>
-                        --
-                        </b>
-                    </li>
-                </ul>
-            </div>
-            <form @submit.prevent="addNewTag">
-                <input id='new-tag-text' v-model='newTagText' placeholder='add new tag...' />
-            </form>
-        </div>
+    </div>
+    <div v-else>
+        <p>
+            <LoginPage />
+        </p>
     </div>
 </div>
 </template>
 
 <script>
-/*
-TODO: 
- - total notes is still not accurate
-
-
-
-*/
 
 import FileView  from '@/components/FileView.vue' ;
 import FilesList from '@/components/FilesList.vue';
+import LoginPage from '@/components/LoginPage.vue';
 import axios from 'axios';
 
 export default {
@@ -101,6 +102,7 @@ export default {
     components: {
         FileView,
         FilesList,
+        LoginPage,
     },
     data() {
         return {
@@ -115,6 +117,13 @@ export default {
         }
     },
     async created() {
+        try {
+            let response = axios.get(`/api/users/`);
+            this.$root.$data.user = response.data.user;
+        } catch(err) {
+            this.$root.$data.user = null;
+        }
+
         await this.getFolders();
 
         if(this.note !== null){
@@ -130,6 +139,9 @@ export default {
         },
         note() {
             return this.$root.$data.note;
+        },
+        user() {
+            return this.$root.$data.user;
         }
     },
     methods: {
@@ -317,9 +329,6 @@ export default {
 * {
     font-family: 'Source Sans Pro', sans-serif;
     box-sizing: border-box;
-}
-.home {
-    /* border: 1px solid red; */
 }
 
 .lists {

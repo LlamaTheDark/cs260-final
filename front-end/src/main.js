@@ -6,6 +6,7 @@ Vue.config.productionTip = false
 
 let data = {
     note: null,
+    user: null,
 }
 
 new Vue({

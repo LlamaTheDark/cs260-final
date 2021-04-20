@@ -9,7 +9,10 @@ const Note = notes.model;
 const folderSchema = new mongoose.Schema({
     name: String,
     description: String,
-    noteCount: Number,
+    noteCount: {
+        type: Number,
+        default: 0,
+    },
     tags: Array, // the accumulation of all the tags of its notes
 });
 
@@ -20,7 +23,7 @@ const Folder = mongoose.model('Folder', folderSchema);
 // ########### //
 
 // get a list of all folders
-app.get('/api/folders', async (req, res) => {
+router.get('/api/folders', async (req, res) => {
     try{
         let folders = await Folder.find();
         if(!folders){
@@ -35,7 +38,7 @@ app.get('/api/folders', async (req, res) => {
 });
 
 // get a folder by its id
-app.get('/api/folders/:folderID', async (req, res) => {
+router.get('/api/folders/:folderID', async (req, res) => {
     console.log('getting a folder by its id...');
     try {
         let folder = await Folder.findOne({_id: req.params.folderID});
@@ -52,7 +55,7 @@ app.get('/api/folders/:folderID', async (req, res) => {
 });
 
 // create a new folder
-app.post('/api/folders', async (req, res) => {
+router.post('/api/folders', async (req, res) => {
     const folder = new Folder({
         name: req.body.name,
         description: req.body.description,
@@ -68,7 +71,7 @@ app.post('/api/folders', async (req, res) => {
 });
 
 // delete a folder (and it's contents)
-app.delete('/api/folders/:folderID', async(req, res) => {
+router.delete('/api/folders/:folderID', async(req, res) => {
     try{
         let folder = await Folder.findOne({_id: req.params.folderID});
         if(!folder){
@@ -90,7 +93,7 @@ app.delete('/api/folders/:folderID', async(req, res) => {
 });
 
 // edit a folder (name and color)
-app.put('/api/folders/:folderID', async (req, res) => {
+router.put('/api/folders/:folderID', async (req, res) => {
     try{
         let folder = await Folder.findOne({_id: req.params.folderID});
         if(!folder){

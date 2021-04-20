@@ -23,7 +23,7 @@ const Note = mongoose.model('Note'  , noteSchema  );
 //  ENDPOINTS  //
 // ########### //
 
-app.get('/api/notes', async (req, res) => {
+router.get('/api/notes', async (req, res) => {
     try{
         let notes = await Note.find();
         if(!notes){
@@ -38,7 +38,7 @@ app.get('/api/notes', async (req, res) => {
 });
 
 // get a list of all notes for a given folder
-app.get('/api/folders/:folderID/notes', async (req, res) => {
+router.get('/', async (req, res) => {
     try{
         let notes = await Note.find({folder: req.params.folderID});
         if(!notes){
@@ -54,7 +54,7 @@ app.get('/api/folders/:folderID/notes', async (req, res) => {
 
 
 // get all notes with a certain tag
-app.get('/api/folders/:folderID/notes/:tag', async (req, res) => {
+router.get('/:tag', async (req, res) => {
     try{
         let note = await Note.find({tags: req.params.tag});
         if(!note){
@@ -69,7 +69,7 @@ app.get('/api/folders/:folderID/notes/:tag', async (req, res) => {
 });
 
 // get a specific note by id
-app.get('/api/folders/:folderID/notes/:noteID', async (req, res) => {
+router.get('/:noteID', async (req, res) => {
     try{
         let note = await Note.findOne({_id: req.params.noteID, folder: req.params.folderID});
         if(!note){
@@ -84,7 +84,7 @@ app.get('/api/folders/:folderID/notes/:noteID', async (req, res) => {
 });
 
 // create a new note - in a given folder (post)
-app.post('/api/folders/:folderID/notes', async (req, res) => {
+router.post('/', async (req, res) => {
     const note = new Note({
         name: req.body.name,
         extension: req.body.extension,
@@ -103,7 +103,7 @@ app.post('/api/folders/:folderID/notes', async (req, res) => {
 });
 
 // delete a note (delete)
-app.delete('/api/folders/:folderID/notes/:noteID', async (req, res) => {
+router.delete('/:noteID', async (req, res) => {
     try{
         let note = await Note.findOne({_id: req.params.noteID, folder: req.params.folderID});
         if(!note){
@@ -119,7 +119,7 @@ app.delete('/api/folders/:folderID/notes/:noteID', async (req, res) => {
 });
 
 // edit a note (put)
-app.put('/api/folders/:folderID/notes/:noteID', async(req, res) => {
+router.put('/:noteID', async(req, res) => {
     try{
         let note = await Note.findOne({_id: req.params.noteID, folder: req.params.folderID});
         if(!note){

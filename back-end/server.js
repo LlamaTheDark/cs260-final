@@ -2,10 +2,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
+
+const users = require('./users.js');
+const User = users.model;
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
+}));
+
+app.use(cookieParser());
+app.use(cookieSession({
+    name: 'session',
+    keys: ['secretvalue'],
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
 
 mongoose.connect('mongodb://localhost:27017/cs260-final', {
@@ -25,6 +40,10 @@ const noteSchema = new mongoose.Schema({
 });
 
 const folderSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.ObjectId
+        ref: 'User'
+    }
     name: String,
     description: String,
     noteCount: {
@@ -252,5 +271,8 @@ app.put('/api/folders/:folderID', async (req, res) => {
 });
 
 /* ### /FOLDER CALLS #### */
+
+
+app.use('/api/users', users.routes);
 
 app.listen(3003, () => { console.log('Server listening on port 3003') });
