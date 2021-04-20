@@ -118,7 +118,7 @@ export default {
     },
     async created() {
         try {
-            let response = axios.get(`/api/users/`);
+            let response = await axios.get(`/api/users/`);
             this.$root.$data.user = response.data.user;
         } catch(err) {
             this.$root.$data.user = null;
@@ -321,6 +321,9 @@ export default {
             if(newvalue !== null)
                 this.getNotes();
         },
+        user: async function(){
+            await this.getFolders();
+        }
     }
 }
 </script>

@@ -37,16 +37,24 @@ export default {
     },
     async created() {
         try{
-            let tmp = [];
-            let response = (await axios.get(`/api/notes`)).data;
-            for(let e of response){
-                for(let t of e.tags){
-                    if(!tmp.includes(t))
-                        tmp.push(t);
+            let result = [];
+            let notes = [];
+
+            // get all folders for a singe user
+            let response = await axios.get('/api/folders');
+            for(let f of response.data){
+                let responseNotes = await axios.get(`/api/folders/${f._id}/notes`);
+                console.log(responseNotes);
+                for(let n of responseNotes.data){
+                    notes.push(n);
+                    for(let t of n.tags){ // this is some YIKES time complexity O(n^3) I think...
+                        if(!result.includes(t))
+                            result.push(t);
+                    }
                 }
             }
-            this.tags = tmp;
-            this.notes = response;
+            this.notes = notes;
+            this.tags = this.result;
 
         } catch(err) { console.log(err); }
         

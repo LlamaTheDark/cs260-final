@@ -68,6 +68,7 @@ const validUser = async (req, res, next) => {
             });
         }
         req.user = user;
+        console.log('valid user logged in! username: ' + user.username);
     } catch(err) {
         return res.status(403).send({
             message: 'not logged in',

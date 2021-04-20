@@ -7,6 +7,7 @@ const cookieSession = require('cookie-session');
 
 const users = require('./users.js');
 const User = users.model;
+const validUser = users.valid;
 
 const app = express();
 app.use(bodyParser.json());
@@ -41,9 +42,9 @@ const noteSchema = new mongoose.Schema({
 
 const folderSchema = new mongoose.Schema({
     user: {
-        type: mongoose.Schema.ObjectId
+        type: mongoose.Schema.ObjectId,
         ref: 'User'
-    }
+    },
     name: String,
     description: String,
     noteCount: {
@@ -181,10 +182,10 @@ app.put('/api/folders/:folderID/notes/:noteID', async(req, res) => {
 //  ENDPOINTS  //
 // ########### //
 
-// get a list of all folders
-app.get('/api/folders', async (req, res) => {
+// get a list of all folders for a given user
+app.get('/api/folders', validUser, async (req, res) => {
     try{
-        let folders = await Folder.find();
+        let folders = await Folder.find({user: req.user._id});
         if(!folders){
             res.sendStatus(404);
             return;
@@ -214,8 +215,9 @@ app.get('/api/folders/:folderID', async (req, res) => {
 });
 
 // create a new folder
-app.post('/api/folders', async (req, res) => {
+app.post('/api/folders', validUser, async (req, res) => {
     const folder = new Folder({
+        user: req.user._id,
         name: req.body.name,
         description: req.body.description,
         noteCount: 0,

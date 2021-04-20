@@ -23,20 +23,6 @@ const Note = mongoose.model('Note'  , noteSchema  );
 //  ENDPOINTS  //
 // ########### //
 
-router.get('/api/notes', async (req, res) => {
-    try{
-        let notes = await Note.find();
-        if(!notes){
-            res.sendStatus(404);
-            return;
-        }
-        res.send(notes);
-    } catch(error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
 // get a list of all notes for a given folder
 router.get('/', async (req, res) => {
     try{

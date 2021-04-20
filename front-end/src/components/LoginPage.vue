@@ -90,7 +90,7 @@ export default {
             if(!this.usernameLogin || !this.passwordLogin)
                 return;
             try {
-                let response = await axios.post(`/users/api/login`, {
+                let response = await axios.post(`/api/users/login`, {
                     username: this.usernameLogin,
                     password: this.passwordLogin,
                 });
