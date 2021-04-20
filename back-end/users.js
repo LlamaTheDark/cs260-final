@@ -68,7 +68,6 @@ const validUser = async (req, res, next) => {
             });
         }
         req.user = user;
-        console.log('valid user logged in! username: ' + user.username);
     } catch(err) {
         return res.status(403).send({
             message: 'not logged in',
@@ -141,7 +140,7 @@ router.post('/login', async (req, res) => {
         // return the SAME error if the password is wrong.
         // This way we don't leak our users' information.
         if(!await user.comparePassword(req.body.password))
-            return req.status(403).send({
+            return res.status(403).send({
                 message: 'username or password is wrong'
             });
         

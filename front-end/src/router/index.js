@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Search from '../views/Search.vue'
-import Upload from '../views/Upload.vue'
 
 Vue.use(VueRouter)
 
@@ -17,11 +16,6 @@ const routes = [
         name: 'Search',
         component: Search
     },
-    {
-        path: '/upload',
-        name: 'Upload',
-        component: Upload
-    }
 ]
 
 const router = new VueRouter({

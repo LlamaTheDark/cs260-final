@@ -1,23 +1,33 @@
 <template>
 <div class='home'>
     <div v-if="user">
-        <div id='controls'>
-            Folders:
-            <button @click="addFolder">
-                Add Folder
-            </button>
-            <button @click="deleteFolder">
-                Delete Folder
-            </button>
-            Notes:
-            <button @click="addNote">
-                Add Note
-            </button>
-            <button @click="deleteNote">
-                Delete Note
-            </button>
-            <input type='checkbox' v-model="rendered">
-            Render Text
+        <div id='menu'>
+            <div id='spacer'>
+            </div>
+            <div id='controls'>
+                Folders:
+                <button @click="addFolder">
+                    Add Folder
+                </button>
+                <button @click="deleteFolder">
+                    Delete Folder
+                </button>
+                Notes:
+                <button @click="addNote">
+                    Add Note
+                </button>
+                <button @click="deleteNote">
+                    Delete Note
+                </button>
+                <input type='checkbox' v-model="rendered">
+                Render Text
+            </div>
+            <div class='login-help'>
+                Logged in as: {{user.username}}
+                <button @click="logout">
+                    logout
+                </button>
+            </div>
         </div>
         <div class='main-components'>
             <div class='lists'>
@@ -44,22 +54,7 @@
                         </li>
                     </ul>
                 </div>
-                <div id='files-list'>
-                    <FilesList id='files-list' :notes="notes" :options="true" />
-
-                    <!-- <h2 class='title'>
-                        Notes
-                    </h2> -->
-                    <!--
-                    <ul id='files'>
-                        <li v-for="n in notes" :key="n._id" @click='selectNote(n)'>
-                            <h4 :class="{selected: (n === note), 'note-title': true}">
-                                {{ n.name }}{{ n.extension }}
-                            </h4>
-                            <hr>
-                        </li>
-                    </ul> -->
-                </div>
+                <FilesList id='files-list' :notes="notes"/>
             </div>
             <FileView id='file-view' :note="note" :rendered="rendered" :folder="folder" />
             <div class='tag-view'>
@@ -124,8 +119,6 @@ export default {
             this.$root.$data.user = null;
         }
 
-        await this.getFolders();
-
         if(this.note !== null){
             let tmp = await this.getFolderFromNote(this.$root.$data.note);
             this.folder = tmp;
@@ -150,7 +143,7 @@ export default {
                 const response = await axios.get('/api/folders');
                 this.folders = response.data;
                 
-                if (this.folders.length != 0){ // if there are folders present upon creation, select the first one
+                if (this.folders.length !== 0){ // if there are folders present upon creation, select the first one
                     this.folder = this.folders[this.folders.length-1];
                 }
                 if(this.folder !== null){
@@ -314,14 +307,21 @@ export default {
         async getFolderFromNote(note){
             let response = await axios.get(`/api/folders/${note.folder}`);
             return this.folders.find(folder => response.data._id === folder._id);
+        },
+        async logout(){
+            await axios.delete('/api/users');
+            this.$root.$data.user = null;
         }
     },
     watch: {
         folder: function(newvalue){
-            if(newvalue !== null)
+            if(newvalue !== null){
                 this.getNotes();
+            }
         },
-        user: async function(){
+        '$root.$data.user': async function(){
+            // console.log('does this even work');
+            this.folder = null;
             await this.getFolders();
         }
     }
@@ -508,6 +508,18 @@ button:active {
 
 #new-tag-text {
     margin: 5px;
+}
+
+.login-help {
+}
+#controls {
+}
+#menu {
+    display: flex;
+    justify-content: right;
+}
+#spacer {
+    width: 25%;
 }
 
 </style>

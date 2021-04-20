@@ -95,7 +95,6 @@ export default {
                     password: this.passwordLogin,
                 });
                 this.$root.$data.user = response.data.user;
-                console.log(response.data.user);
             } catch(err) {
                 this.errorLogin = err.response.data.message;
             }

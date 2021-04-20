@@ -131,7 +131,7 @@ app.post('/api/folders/:folderID/notes', async (req, res) => {
         tags: req.body.tags,
         selected: req.body.selected,
         folder: req.body.folder._id,
-    })
+    });
     try{
         await note.save();
         res.send(note);
@@ -199,7 +199,6 @@ app.get('/api/folders', validUser, async (req, res) => {
 
 // get a folder by its id
 app.get('/api/folders/:folderID', async (req, res) => {
-    console.log('getting a folder by its id...');
     try {
         let folder = await Folder.findOne({_id: req.params.folderID});
         if(!folder){
@@ -232,7 +231,7 @@ app.post('/api/folders', validUser, async (req, res) => {
 });
 
 // delete a folder (and it's contents)
-app.delete('/api/folders/:folderID', async(req, res) => {
+app.delete('/api/folders/:folderID', async (req, res) => {
     try{
         let folder = await Folder.findOne({_id: req.params.folderID});
         if(!folder){
@@ -261,9 +260,11 @@ app.put('/api/folders/:folderID', async (req, res) => {
             res.sendStatus(404);
             return;
         }
+        folder.user = req.body.user;
         folder.name = req.body.name;
         folder.tags = req.body.tags;
         folder.noteCount = req.body.noteCount;
+        folder.description = req.body.description;
         await folder.save();
         res.send(folder);
     } catch(error) {
@@ -271,9 +272,6 @@ app.put('/api/folders/:folderID', async (req, res) => {
         res.sendStatus(500);
     }
 });
-
-/* ### /FOLDER CALLS #### */
-
 
 app.use('/api/users', users.routes);
 

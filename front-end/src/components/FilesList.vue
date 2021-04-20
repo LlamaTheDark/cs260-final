@@ -29,10 +29,10 @@ export default {
     methods: {
         selectNote(n){
             this.$root.$data.note = n;
-            // console.log(this.$root.$data.note);
-            // console.log(this.note.name);
+            console.log(`selecting note:`);
+            console.log(this.$root.$data.note);
         }
-    }
+    },
 }
 
 </script>

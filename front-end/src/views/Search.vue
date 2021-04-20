@@ -47,14 +47,14 @@ export default {
                 console.log(responseNotes);
                 for(let n of responseNotes.data){
                     notes.push(n);
-                    for(let t of n.tags){ // this is some YIKES time complexity O(n^3) I think...
-                        if(!result.includes(t))
+                }
+                for(let t of f.tags){
+                    if(!result.includes(t))
                             result.push(t);
-                    }
                 }
             }
             this.notes = notes;
-            this.tags = this.result;
+            this.tags = result;
 
         } catch(err) { console.log(err); }
         
