@@ -15,7 +15,7 @@
         </div>
         <router-view/>
         <div id="footer">
-            <a href='https://github.com/LlamaTheDark/cs260-cp4'>
+            <a href='https://github.com/LlamaTheDark/cs260-final'>
                 <div>
                     GitHub Link
                 </div>
